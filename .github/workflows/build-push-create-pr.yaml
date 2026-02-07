@@ -134,6 +134,7 @@ jobs:
           ```
           ${CHANGED_FILES}
           ```
+
           EOF
           BODY=$(cat ${HOME}/pr-body.txt)
           gh pr new -t "${MESSAGE}" -b "${BODY}" -H${BRANCH} -Bstaging
