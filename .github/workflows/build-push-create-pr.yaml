@@ -7,7 +7,7 @@ on:
         required: true
       hub:
         type: string
-        required: true
+        required: false
       app_id:
         type: string
         required: true
@@ -79,7 +79,7 @@ jobs:
 
     # only run this job if the image was built and pushed successfully.
     # repo2docker-action emits the image-tag as an output
-    if: ${{ needs.build-and-push.outputs.image-tag }}
+    if: ${{ needs.build-and-push.outputs.image-tag && inputs.hub != ''}}
     env:
       HUB: ${{ inputs.hub }}
       IMAGE: ${{ inputs.image }}
