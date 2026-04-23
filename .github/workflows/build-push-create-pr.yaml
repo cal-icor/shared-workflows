@@ -54,7 +54,7 @@ jobs:
         id: build-and-push
         uses: jupyterhub/repo2docker-action@master
         with:
-          FORCE_REPO2DOCKER_VERSION: jupyter-repo2docker==2025.12.0
+          FORCE_REPO2DOCKER_VERSION: jupyter-repo2docker==2026.04.0
           DOCKER_REGISTRY: us-central1-docker.pkg.dev
           IMAGE_NAME: ${{ env.IMAGE }}
           # Disable pushing a 'latest' tag, as this often just causes confusion
