@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 name: "Lint workflow files on pull requests"
 on:
   - pull_request  # yamllint disable-line rule:truthy

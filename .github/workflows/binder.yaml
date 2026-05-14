@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 # Reference https://mybinder.readthedocs.io/en/latest/howto/gh-actions-badges.html
 name: Test this PR on Binde
 on:
