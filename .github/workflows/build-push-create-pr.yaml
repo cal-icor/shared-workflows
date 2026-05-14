@@ -1,4 +1,3 @@
-# yamllint disable rule:line-length
 name: Build and Push Container Image, and Push Update to the Cal-ICOR Hub Repo
 on:
   workflow_call:
