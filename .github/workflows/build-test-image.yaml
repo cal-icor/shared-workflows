@@ -30,6 +30,7 @@ jobs:
           FORCE_REPO2DOCKER_VERSION: jupyter-repo2docker==2026.04.0
           REPO_DIR: /srv/repo
           NO_PUSH: true
+          IMAGE_NAME: ${{ vars.IMAGE }}
 
       # Lets us monitor disks getting full as images get bigger over time
       - name: Show how much disk space is left
