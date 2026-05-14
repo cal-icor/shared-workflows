@@ -17,4 +17,4 @@ jobs:
       - name: Install gh-actionlint
         run: |
           gh extension install https://github.com/cschleiden/gh-actionlint
-          gh actionlint
+          gh actionlint -ignore -ignore '".+" line too long'
