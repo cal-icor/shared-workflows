@@ -22,6 +22,8 @@ on:
         required: true
       IMAGE_BUILDER_CREATE_PR:
         required: true
+      PRIVATE_KEY_SECRET:
+        required: true
     outputs:
       image-tag:
         description: "The SHA tag of the built and pushed image"
@@ -90,10 +92,18 @@ jobs:
       IMAGE_TAG: ${{ needs.build-and-push.outputs.image-tag }}
 
     steps:
+      - name: Generate GitHub App token
+        uses: actions/create-github-app-token@v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY_SECRET }}
+          owner: ${{ github.repository_owner }}
+
       - name: Checkout the Jupyterhub repo
         uses: actions/checkout@v6.0.2
         with:
-          token: ${{ secrets.IMAGE_BUILDER_CREATE_PR }}
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
           repository: 'cal-icor/cal-icor-hubs'
           sparse-checkout: |
@@ -130,7 +140,7 @@ jobs:
 
       - name: Create feature branch, add, commit, push changes and open a pull request
         env:
-          GH_TOKEN: ${{ secrets.IMAGE_BUILDER_CREATE_PR }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           CHANGED_FILES=$(git status --porcelain -uno | awk '{print $2}')
           git diff
