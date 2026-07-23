@@ -17,11 +17,24 @@ on:
       image_builder_bot_email:
         type: string
         required: true
+      # Keyless GAR push. When set, the workflow auths via WIF and ignores
+      # GAR_SECRET_KEY. Leave unset to keep using the SA-key login below.
+      wif_provider:
+        type: string
+        required: false
+        default: ''
+      gar_service_account:
+        type: string
+        required: false
+        default: ''
     secrets:
+      # Legacy SA-key GAR login. Optional now: unused when wif_provider is set.
       GAR_SECRET_KEY:
-        required: true
+        required: false
+      # Vestigial (PR creation runs on the GitHub App). Kept declared so callers
+      # still passing it don't error; drop once every repo is on WIF.
       IMAGE_BUILDER_CREATE_PR:
-        required: true
+        required: false
       PRIVATE_KEY_SECRET:
         required: true
     outputs:
@@ -32,6 +45,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write # mint the WIF token for GAR login
     env:
       DOCKER_CONFIG: $HOME/.docker
       IMAGE: ${{ inputs.image }}
@@ -50,7 +66,27 @@ jobs:
             /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift
           df -h
 
-      - name: Log in to GAR
+      # Keyless path: auth via WIF, log in with a short-lived access token.
+      - name: Authenticate to Google Cloud (WIF)
+        id: auth
+        if: inputs.wif_provider != ''
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ inputs.wif_provider }}
+          service_account: ${{ inputs.gar_service_account }}
+          token_format: access_token
+
+      - name: Log in to GAR (WIF)
+        if: inputs.wif_provider != ''
+        uses: docker/login-action@v4.1.0
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      # Legacy path: SA JSON key. Used only when wif_provider is unset.
+      - name: Log in to GAR (SA key)
+        if: inputs.wif_provider == ''
         uses: docker/login-action@v4.1.0
         with:
           registry: us-central1-docker.pkg.dev
