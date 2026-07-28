@@ -1,0 +1,15 @@
+---
+# TEMPORARY canary -- delete before merging.
+# One deliberate actionlint finding (deprecated-commands), to prove reviewdog
+# posts an annotation via the Checks API and that fail_level: error reddens
+# the check. actionlint reports this at severity 'error' despite being a
+# warning-class rule -- which is the whole point of the test.
+name: "reviewdog canary"
+on:
+  workflow_dispatch:
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::set-output name=foo::bar"
