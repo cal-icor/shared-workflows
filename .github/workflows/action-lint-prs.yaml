@@ -1,7 +1,12 @@
-name: "Lint workflow files on pull requests"
+name: "Yaml lint files and workflows on pull requests"
 on:
   pull_request:  # yamllint disable-line rule:truthy
   workflow_call:
+
+# be sure that the callers have the checks: write permission
+permissions:
+  contents: read
+  checks: write
 
 jobs:
   lint:
@@ -15,7 +20,10 @@ jobs:
       - name: Lint YAML files
         run: yamllint --no-warnings .
 
+      # actionlint tags everything 'error', so this catches warnings too
       - uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d
+        with:
+          fail_level: error
 
       # - name: Install gh-actionlint
       #   run: |
