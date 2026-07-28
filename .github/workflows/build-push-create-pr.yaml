@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Check out the image repo
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
 
@@ -162,7 +162,7 @@ jobs:
           owner: ${{ github.repository_owner }}
 
       - name: Checkout the Jupyterhub repo
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
