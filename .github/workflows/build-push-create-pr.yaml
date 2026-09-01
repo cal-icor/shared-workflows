@@ -86,8 +86,6 @@ jobs:
           # so all contents put in /home/jovyan are lost. This particularly prevents any 'start' script from
           # working, as it is needed in runtime.
           REPO_DIR: /srv/repo
-          # Set the timezone to America/Los_Angeles to make log viewing easier
-          REPO2DOCKER_EXTRA_ARGS: --env TZ=America/Los_Angeles
 
       # Lets us monitor disks getting full as images get bigger over time
       - name: Show how much disk space is left
