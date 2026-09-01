@@ -72,6 +72,13 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
+      # ensure that our user images have our local timezone set;
+      # preserve any repo-specific appendix content if present
+      - name: Write repo2docker appendix
+        run: |
+          [ -f appendix ] && cp appendix .r2d-appendix
+          echo "ENV TZ=${{ vars.USER_IMAGE_TZ }}" >> .r2d-appendix
+
       - name: Build the image and push to artifact registry
         id: build-and-push
         uses: jupyterhub/repo2docker-action@master
@@ -86,6 +93,7 @@ jobs:
           # so all contents put in /home/jovyan are lost. This particularly prevents any 'start' script from
           # working, as it is needed in runtime.
           REPO_DIR: /srv/repo
+          APPENDIX_FILE: .r2d-appendix
 
       # Lets us monitor disks getting full as images get bigger over time
       - name: Show how much disk space is left
