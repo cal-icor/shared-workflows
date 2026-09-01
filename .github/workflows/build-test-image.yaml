@@ -25,6 +25,13 @@ jobs:
             /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift
           df -h
 
+      # ensure that our user images have our local timezone set;
+      # preserve any repo-specific appendix content if present
+      - name: Write repo2docker appendix
+        run: |
+          [ -f appendix ] && cp appendix .r2d-appendix
+          echo "ENV TZ=${{ vars.USER_IMAGE_TZ }}" >> .r2d-appendix
+
       - name: Build and test the image if any image file(s) changed
         id: repo2docker
         uses: jupyterhub/repo2docker-action@master
@@ -33,9 +40,7 @@ jobs:
           REPO_DIR: /srv/repo
           NO_PUSH: true
           IMAGE_NAME: ${{ vars.IMAGE }}
-          # Set the timezone to America/Los_Angeles to make log viewing easier
-          REPO2DOCKER_EXTRA_ARGS: --env TZ=America/Los_Angeles
-
+          APPENDIX_FILE: .r2d-appendix
 
       # Lets us monitor disks getting full as images get bigger over time
       - name: Show how much disk space is left
