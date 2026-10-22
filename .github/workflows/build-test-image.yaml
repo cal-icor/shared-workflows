@@ -36,6 +36,7 @@ jobs:
           USER root
           RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
           USER ${NB_USER}
+          RUN ${MAMBA_EXE} update -p ${NB_PYTHON_PREFIX} -y ca-certificates certifi && ${MAMBA_EXE} clean --all -f -y
           EOF
 
       - name: Build and test the image if any image file(s) changed
