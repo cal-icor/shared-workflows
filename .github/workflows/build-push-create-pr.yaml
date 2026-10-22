@@ -72,12 +72,19 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.access_token }}
 
-      # ensure that our user images have our local timezone set;
-      # preserve any repo-specific appendix content if present
+      # ensure that our user images have our local timezone set
+      # and updated CA certificates; preserve any repo-specific
+      # appendix content if present
       - name: Write repo2docker appendix
         run: |
           [ -f appendix ] && cp appendix .r2d-appendix
           echo "ENV TZ=${{ vars.USER_IMAGE_TZ }}" >> .r2d-appendix
+          cat >> .r2d-appendix << 'EOF'
+          USER root
+          RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
+          USER ${NB_USER}
+          RUN ${MAMBA_EXE} update -p ${NB_PYTHON_PREFIX} -y ca-certificates certifi && ${MAMBA_EXE} clean --all -f -y
+          EOF
 
       - name: Build the image and push to artifact registry
         id: build-and-push
