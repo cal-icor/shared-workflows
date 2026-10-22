@@ -79,7 +79,7 @@ jobs:
         run: |
           [ -f appendix ] && cp appendix .r2d-appendix
           echo "ENV TZ=${{ vars.USER_IMAGE_TZ }}" >> .r2d-appendix
-          cat >> .r2d-appendix << EOF
+          cat >> .r2d-appendix << 'EOF'
           USER root
           RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
           USER ${NB_USER}
