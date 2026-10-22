@@ -25,12 +25,18 @@ jobs:
             /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift
           df -h
 
-      # ensure that our user images have our local timezone set;
-      # preserve any repo-specific appendix content if present
+      # ensure that our user images have our local timezone set
+      # and updated CA certificates; preserve any repo-specific
+      # appendix content if present
       - name: Write repo2docker appendix
         run: |
           [ -f appendix ] && cp appendix .r2d-appendix
           echo "ENV TZ=${{ vars.USER_IMAGE_TZ }}" >> .r2d-appendix
+          cat >> .r2d-appendix << EOF
+          USER root
+          RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
+          USER ${NB_USER}
+          EOF
 
       - name: Build and test the image if any image file(s) changed
         id: repo2docker
