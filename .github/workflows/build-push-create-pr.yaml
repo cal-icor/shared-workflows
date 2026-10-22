@@ -82,6 +82,7 @@ jobs:
           cat >> .r2d-appendix << 'EOF'
           USER root
           RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
+          RUN if [ -f /etc/ssl/certs/java/cacerts ]; then rm /etc/ssl/certs/java/cacerts && update-ca-certificates -f; fi
           USER ${NB_USER}
           RUN ${MAMBA_EXE} update -p ${NB_PYTHON_PREFIX} -y ca-certificates certifi && ${MAMBA_EXE} clean --all -f -y
           EOF
